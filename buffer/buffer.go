@@ -10,11 +10,20 @@ func Create(size int) chan Message {
 }
 
 func Add(messages chan Message, Content string) bool {
-	messages <- Message{Content: Content}
-	return true
+    select {
+        case messages <- Message{Content: Content}:
+            return true
+        default:
+            return false
+    }
 }
 
-func Pop(messages chan Message) string {
-	message := <-messages
-	return message.Content
+func Pop(messages chan Message) (string, bool) {
+    select {
+        case message := <-messages:
+            return message.Content, true
+        default:
+            return "", false
+    }
+
 }

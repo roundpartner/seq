@@ -22,10 +22,10 @@ func TestAdd(t *testing.T) {
 }
 
 func TestAddTwo(t *testing.T) {
-	messages := Create(2)
+	messages := Create(1)
 	Add(messages, "Hello World")
 	result := Add(messages, "Hello World")
-	if true != result {
+	if false != result {
 		t.Fail()
 	}
 }
@@ -33,8 +33,18 @@ func TestAddTwo(t *testing.T) {
 func TestPop(t *testing.T) {
 	messages := Create(1)
 	Add(messages, "Hello World")
-	message := Pop(messages)
+	message, _ := Pop(messages)
 	if "Hello World" != message {
 		t.Fail()
 	}
+}
+
+func TestPopTwo(t *testing.T) {
+    messages := Create(1)
+    Add(messages, "Hello World")
+    Pop(messages)
+    _, ok := Pop(messages)
+    if false != ok {
+        t.Fail()
+    }
 }
