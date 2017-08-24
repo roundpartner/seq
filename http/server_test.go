@@ -4,6 +4,7 @@ import (
     "testing"
     "net/http"
     "net/http/httptest"
+    "github.com/roundpartner/seq/buffer"
 )
 
 func TestGet(t *testing.T) {
@@ -45,6 +46,7 @@ func TestPost(t *testing.T) {
 }
 
 func recordPost(t *testing.T) *httptest.ResponseRecorder {
+    buf = buffer.Create(1)
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("POST", "/", nil)
     if err != nil {
