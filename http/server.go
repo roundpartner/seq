@@ -3,7 +3,6 @@ package http
 import (
     "github.com/gorilla/mux"
     "net/http"
-    "fmt"
     "github.com/roundpartner/seq/buffer"
     "io/ioutil"
     "encoding/json"
@@ -23,9 +22,7 @@ func Serve() {
 func Get(w http.ResponseWriter, req *http.Request) {
     message, ok := buffer.Pop(buf)
     if false == ok {
-        w.Header().Set("Content-Type", "application/json; charset=utf-8")
-        w.WriteHeader(http.StatusOK)
-        fmt.Fprint(w, "{}")
+        WriteEmptyJson(w)
         return
     }
     js, err := json.Marshal(message)
