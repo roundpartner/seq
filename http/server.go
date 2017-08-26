@@ -30,7 +30,7 @@ func Get(w http.ResponseWriter, req *http.Request) {
     }
     js, err := json.Marshal(message)
     if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
+        InternalError(w, err.Error())
         return
     }
     w.Header().Set("Content-Type", "application/json")
@@ -40,14 +40,14 @@ func Get(w http.ResponseWriter, req *http.Request) {
 func Post(w http.ResponseWriter, req *http.Request) {
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-    body, error := ioutil.ReadAll(req.Body)
-    if error != nil {
-        w.WriteHeader(http.StatusBadRequest)
+    body, err := ioutil.ReadAll(req.Body)
+    if err != nil {
+        InternalError(w, err.Error())
         return
     }
     res := buffer.Add(buf, string(body))
     if false == res {
-        w.WriteHeader(http.StatusInternalServerError)
+        InternalError(w, "Buffer Full")
         return
     }
     w.WriteHeader(http.StatusNoContent)

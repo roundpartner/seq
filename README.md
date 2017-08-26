@@ -6,3 +6,11 @@ A Task Queue In Go
 ```bash
 go build
 ```
+
+```bash
+curl http://0.0.0.0:6060
+```
+
+```bash
+curl http://0.0.0.0:6060 -X POST -d "hello world"
+```
