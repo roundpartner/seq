@@ -7,6 +7,7 @@ import (
     "io/ioutil"
     "encoding/json"
     "github.com/roundpartner/seq/claim"
+    "strconv"
 )
 
 var buf chan buffer.Message = nil
@@ -16,11 +17,15 @@ func Serve() {
     buf = buffer.Create(1)
     claims = claim.New()
 
+    http.ListenAndServe(":6060", router())
+}
+
+func router() *mux.Router {
     router := mux.NewRouter()
     router.HandleFunc("/", Get).Methods("GET")
     router.HandleFunc("/", Post).Methods("POST")
     router.HandleFunc("/{id}", Delete).Methods("DELETE")
-    http.ListenAndServe(":6060", router)
+    return router
 }
 
 func Get(w http.ResponseWriter, req *http.Request) {
@@ -54,9 +59,14 @@ func Post(w http.ResponseWriter, req *http.Request) {
 }
 
 func Delete(w http.ResponseWriter, req *http.Request) {
-    //params := mux.Vars(req)
-    //id := params["id"]
-    qry := claim.Query{Id: 1, Out: make(chan claim.Item), Delete: true}
+    params := mux.Vars(req)
+    id, err := strconv.ParseInt(params["id"], 10, 32)
+
+    if err != nil {
+        InternalError(w, err.Error())
+        return
+    }
+    qry := claim.Query{Id: int(id), Out: make(chan claim.Item), Delete: true}
     claims.Query <- qry
     ec := claim.Item{}
     if ec == <- qry.Out {

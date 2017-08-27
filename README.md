@@ -7,6 +7,11 @@ A Task Queue In Go
 go build
 ```
 
+## Running
+```bash
+./seq
+```
+
 ```bash
 curl http://0.0.0.0:6060 -X POST -d "hello world"
 ```

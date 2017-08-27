@@ -93,8 +93,12 @@ func TestDelete(t *testing.T) {
     if err != nil {
         t.Fatal(err)
     }
-    Delete(rr, req)
+
+    r := router()
+    r.ServeHTTP(rr, req)
+
     if rr.Code != http.StatusNotFound {
+        t.Errorf("code: %d r: %s", rr.Code, rr.Body.String())
         t.Fail()
     }
 }
@@ -108,12 +112,15 @@ func TestDeleteReturnsNoContent(t *testing.T) {
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)
     if err != nil {
-        t.Errorf("id: %d", c.Id)
+        t.Errorf("c: %d code: %d r: %s", c.Id, rr.Code, rr.Body.String())
         t.Fatal(err)
     }
-    Delete(rr, req)
+
+    r := router()
+    r.ServeHTTP(rr, req)
+
     if rr.Code != http.StatusNoContent {
-        t.Errorf("id: %d", c.Id)
+        t.Errorf("c: %d code: %d r: %s", c.Id, rr.Code, rr.Body.String())
         t.Fail()
     }
 }
