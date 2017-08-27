@@ -86,3 +86,34 @@ func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
     Post(rr, req)
     return rr
 }
+
+func TestDelete(t *testing.T) {
+    rr := httptest.NewRecorder()
+    req, err := http.NewRequest("DELETE", "/1", nil)
+    if err != nil {
+        t.Fatal(err)
+    }
+    Delete(rr, req)
+    if rr.Code != http.StatusNotFound {
+        t.Fail()
+    }
+}
+
+func TestDeleteReturnsNoContent(t *testing.T) {
+    buf = buffer.Create(1)
+    claims = claim.New()
+    claim.NewC(claims, buf)
+    buffer.Add(buf, "Hello World")
+    c, _ := claim.Next(claims, buf)
+    rr := httptest.NewRecorder()
+    req, err := http.NewRequest("DELETE", "/1", nil)
+    if err != nil {
+        t.Errorf("id: %d", c.Id)
+        t.Fatal(err)
+    }
+    Delete(rr, req)
+    if rr.Code != http.StatusNoContent {
+        t.Errorf("id: %d", c.Id)
+        t.Fail()
+    }
+}

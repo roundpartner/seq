@@ -19,6 +19,7 @@ func Serve() {
     router := mux.NewRouter()
     router.HandleFunc("/", Get).Methods("GET")
     router.HandleFunc("/", Post).Methods("POST")
+    router.HandleFunc("/{id}", Delete).Methods("DELETE")
     http.ListenAndServe(":6060", router)
 }
 
@@ -33,7 +34,6 @@ func Get(w http.ResponseWriter, req *http.Request) {
         InternalError(w, err.Error())
         return
     }
-    w.Header().Set("Content-Type", "application/json")
     w.Write(js)
 }
 
@@ -48,6 +48,19 @@ func Post(w http.ResponseWriter, req *http.Request) {
     res := buffer.Add(buf, string(body))
     if false == res {
         InternalError(w, "Buffer Full")
+        return
+    }
+    w.WriteHeader(http.StatusNoContent)
+}
+
+func Delete(w http.ResponseWriter, req *http.Request) {
+    //params := mux.Vars(req)
+    //id := params["id"]
+    qry := claim.Query{Id: 1, Out: make(chan claim.Item), Delete: true}
+    claims.Query <- qry
+    ec := claim.Item{}
+    if ec == <- qry.Out {
+        w.WriteHeader(http.StatusNotFound)
         return
     }
     w.WriteHeader(http.StatusNoContent)
