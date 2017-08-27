@@ -6,6 +6,7 @@ import (
     "net/http/httptest"
     "github.com/roundpartner/seq/buffer"
     "strings"
+    "github.com/roundpartner/seq/claim"
 )
 
 func TestGet(t *testing.T) {
@@ -31,9 +32,10 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 
 func TestGetReturnsMessage(t *testing.T) {
     buf = buffer.Create(1)
+    claims = claim.New()
     buffer.Add(buf, "Hello World")
     rr := recordGet(t)
-    if "\"Hello World\"" != rr.Body.String() {
+    if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
         t.Fail()
     }
@@ -74,6 +76,7 @@ func TestPostAddsMessageToBuffer(t *testing.T) {
 
 func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
     buf = buffer.Create(1)
+    claims = claim.New()
     rr := httptest.NewRecorder()
     r := strings.NewReader(body)
     req, err := http.NewRequest("POST", "/", r)

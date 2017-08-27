@@ -6,12 +6,15 @@ import (
     "github.com/roundpartner/seq/buffer"
     "io/ioutil"
     "encoding/json"
+    "github.com/roundpartner/seq/claim"
 )
 
 var buf chan buffer.Message = nil
+var claims *claim.Elastic = nil
 
 func Serve() {
     buf = buffer.Create(1)
+    claims = claim.New()
 
     router := mux.NewRouter()
     router.HandleFunc("/", Get).Methods("GET")
@@ -20,7 +23,7 @@ func Serve() {
 }
 
 func Get(w http.ResponseWriter, req *http.Request) {
-    message, ok := buffer.Pop(buf)
+    message, ok := claim.Next(claims, buf)
     if false == ok {
         WriteEmptyJson(w)
         return
