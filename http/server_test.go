@@ -11,6 +11,8 @@ import (
 
 func TestGet(t *testing.T) {
     sb = buffer.New(0)
+    claims = claim.New()
+    clm = claim.NewC(claims, sb)
     rr := recordGet(t)
     if rr.Code != http.StatusOK {
         t.Fail()
@@ -36,6 +38,7 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 func TestGetReturnsMessage(t *testing.T) {
     sb = buffer.New(1)
     claims = claim.New()
+    clm = claim.NewC(claims, sb)
     sb.Add("Hello World")
     rr := recordGet(t)
     if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
@@ -109,9 +112,9 @@ func TestDelete(t *testing.T) {
 func TestDeleteReturnsNoContent(t *testing.T) {
     sb = buffer.New(1)
     claims = claim.New()
-    claim.NewC(claims, sb)
+    clm := claim.NewC(claims, sb)
     sb.Add("Hello World")
-    c, _ := claim.Next(claims, sb)
+    c, _ := clm.Next()
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)
     if err != nil {

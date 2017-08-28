@@ -7,8 +7,9 @@ import (
 
 func TestNext(t *testing.T) {
     e, sb := reset(1)
+    clm := NewC(e, sb)
     sb.Add("Hello World")
-    _, ok := Next(e, sb)
+    _, ok := clm.Next()
     if false == ok {
         t.Fail()
     }
@@ -16,8 +17,9 @@ func TestNext(t *testing.T) {
 
 func TestNextHasId(t *testing.T) {
     e, sb := reset(1)
+    clm := NewC(e, sb)
     sb.Add("Hello World")
-    c, _ := Next(e, sb)
+    c, _ := clm.Next()
     if 1 != c.Id {
         t.Fail()
     }
@@ -25,8 +27,9 @@ func TestNextHasId(t *testing.T) {
 
 func TestNextHasBody(t *testing.T) {
     e, sb := reset(1)
+    clm := NewC(e, sb)
     sb.Add("Hello World")
-    c, _ := Next(e, sb)
+    c, _ := clm.Next()
     if "Hello World" != c.Body {
         t.Fail()
     }
@@ -34,10 +37,11 @@ func TestNextHasBody(t *testing.T) {
 
 func TestNextHasIncrementingId(t *testing.T) {
     e, sb := reset(2)
+    clm := NewC(e, sb)
     sb.Add("Hello World")
     sb.Add("Hello World")
-    Next(e, sb)
-    c, _ := Next(e, sb)
+    clm.Next()
+    c, _ := clm.Next()
     if 2 != c.Id {
         t.Errorf("got: %d", c.Id)
         t.Fail()
@@ -46,8 +50,9 @@ func TestNextHasIncrementingId(t *testing.T) {
 
 func TestNextInsertsAddsClaim(t *testing.T) {
     e, sb := reset(1)
+    clm := NewC(e, sb)
     sb.Add("Hello World")
-    c, _ := Next(e, sb)
+    c, _ := clm.Next()
     if <-e.Out != c {
         t.Fail()
     }

@@ -12,10 +12,12 @@ import (
 
 var sb *buffer.SimpleBuffer = nil
 var claims *claim.Elastic = nil
+var clm *claim.C = nil
 
 func Serve() {
     sb = buffer.New(1)
     claims = claim.New()
+    clm = claim.NewC(claims, sb)
 
     http.ListenAndServe(":6060", router())
 }
@@ -29,7 +31,7 @@ func router() *mux.Router {
 }
 
 func Get(w http.ResponseWriter, req *http.Request) {
-    message, ok := claim.Next(claims, sb)
+    message, ok := clm.Next()
     if false == ok {
         WriteEmptyJson(w)
         return
