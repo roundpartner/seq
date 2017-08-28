@@ -10,29 +10,35 @@ import (
     "strconv"
 )
 
+var rs *RestServer
 var sb *buffer.SimpleBuffer = nil
 var claims *claim.Elastic = nil
 var clm *claim.C = nil
 
 func Serve() {
+    rs := New()
+    http.ListenAndServe(":6060", rs.router())
+}
+
+func New() *RestServer {
     sb = buffer.New(1)
     claims = claim.New()
     clm = claim.NewC(claims, sb)
 
-    http.ListenAndServe(":6060", router())
-}
-
-func router() *mux.Router {
-    router := mux.NewRouter()
-    rs := RestServer{}
-    router.HandleFunc("/", rs.Get).Methods("GET")
-    router.HandleFunc("/", rs.Post).Methods("POST")
-    router.HandleFunc("/{id}", rs.Delete).Methods("DELETE")
-    return router
+    rs := &RestServer{}
+    return rs
 }
 
 type RestServer struct {
 
+}
+
+func (rs *RestServer) router() *mux.Router {
+    router := mux.NewRouter()
+    router.HandleFunc("/", rs.Get).Methods("GET")
+    router.HandleFunc("/", rs.Post).Methods("POST")
+    router.HandleFunc("/{id}", rs.Delete).Methods("DELETE")
+    return router
 }
 
 func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {

@@ -48,12 +48,12 @@ func TestGetReturnsMessage(t *testing.T) {
 }
 
 func recordGet(t *testing.T) *httptest.ResponseRecorder {
+    rs = &RestServer{}
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("GET", "/", nil)
     if err != nil {
         t.Fatal(err)
     }
-    rs := RestServer{}
     rs.Get(rr, req)
     return rr
 }
@@ -82,6 +82,7 @@ func TestPostAddsMessageToBuffer(t *testing.T) {
 }
 
 func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
+    rs = &RestServer{}
     sb = buffer.New(1)
     claims = claim.New()
     rr := httptest.NewRecorder()
@@ -90,7 +91,7 @@ func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
     if err != nil {
         t.Fatal(err)
     }
-    rs := RestServer{}
+
     rs.Post(rr, req)
     return rr
 }
@@ -102,8 +103,8 @@ func TestDelete(t *testing.T) {
         t.Fatal(err)
     }
 
-    r := router()
-    r.ServeHTTP(rr, req)
+    rs = &RestServer{}
+    rs.router().ServeHTTP(rr, req)
 
     if rr.Code != http.StatusNotFound {
         t.Errorf("code: %d r: %s", rr.Code, rr.Body.String())
@@ -124,8 +125,8 @@ func TestDeleteReturnsNoContent(t *testing.T) {
         t.Fatal(err)
     }
 
-    r := router()
-    r.ServeHTTP(rr, req)
+    rs = &RestServer{}
+    rs.router().ServeHTTP(rr, req)
 
     if rr.Code != http.StatusNoContent {
         t.Errorf("c: %d code: %d r: %s", c.Id, rr.Code, rr.Body.String())
