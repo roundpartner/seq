@@ -8,44 +8,44 @@ import (
 )
 
 func TestGet(t *testing.T) {
-    rs = New()
+    rs := New()
 
-    rr := recordGet(t)
+    rr := recordGet(t, rs)
     if rr.Code != http.StatusOK {
         t.Fail()
     }
 }
 
 func TestGetContentTypeIsJson(t *testing.T) {
-    rs = New()
+    rs := New()
 
-    rr := recordGet(t)
+    rr := recordGet(t, rs)
     if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
         t.Fail()
     }
 }
 
 func TestGetReturnsEmptyJson(t *testing.T) {
-    rs = New()
+    rs := New()
 
-    rr := recordGet(t)
+    rr := recordGet(t, rs)
     if "{}" != rr.Body.String() {
         t.Fail()
     }
 }
 
 func TestGetReturnsMessage(t *testing.T) {
-    rs = New()
+    rs := New()
 
-    sb.Add("Hello World")
-    rr := recordGet(t)
+    rs.sb.Add("Hello World")
+    rr := recordGet(t, rs)
     if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
         t.Fail()
     }
 }
 
-func recordGet(t *testing.T) *httptest.ResponseRecorder {
+func recordGet(t *testing.T, rs *RestServer) *httptest.ResponseRecorder {
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("GET", "/", nil)
     if err != nil {
@@ -56,31 +56,32 @@ func recordGet(t *testing.T) *httptest.ResponseRecorder {
 }
 
 func TestPost(t *testing.T) {
-    rr := recordPost(t, "")
+    rs := New()
+    rr := recordPost(t, rs, "")
     if rr.Code != http.StatusNoContent {
         t.Fail()
     }
 }
 
 func TestPostAddsToBuffer(t *testing.T) {
-    recordPost(t, "")
-    _, ok := sb.Pop()
+    rs := New()
+    recordPost(t, rs, "")
+    _, ok := rs.sb.Pop()
     if false == ok {
         t.Fail()
     }
 }
 
 func TestPostAddsMessageToBuffer(t *testing.T) {
-    recordPost(t, "Hello World")
-    message, _ := sb.Pop()
+    rs := New()
+    recordPost(t, rs, "Hello World")
+    message, _ := rs.sb.Pop()
     if "Hello World" != message {
         t.Fail()
     }
 }
 
-func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
-    rs := New()
-
+func recordPost(t *testing.T, rs *RestServer, body string) *httptest.ResponseRecorder {
     rr := httptest.NewRecorder()
     r := strings.NewReader(body)
     req, err := http.NewRequest("POST", "/", r)
@@ -111,8 +112,8 @@ func TestDelete(t *testing.T) {
 func TestDeleteReturnsNoContent(t *testing.T) {
     rs := New()
 
-    sb.Add("Hello World")
-    c, _ := clm.Next()
+    rs.sb.Add("Hello World")
+    c, _ := rs.clm.Next()
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)
     if err != nil {

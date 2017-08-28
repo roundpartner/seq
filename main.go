@@ -3,5 +3,5 @@ package main
 import "github.com/roundpartner/seq/http"
 
 func main() {
-    http.Serve()
+    http.ListenAndServe()
 }

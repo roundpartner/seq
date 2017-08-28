@@ -10,27 +10,24 @@ import (
     "strconv"
 )
 
-var rs *RestServer
-var sb *buffer.SimpleBuffer = nil
-var claims *claim.Elastic = nil
-var clm *claim.C = nil
-
-func Serve() {
+func ListenAndServe() {
     rs := New()
     http.ListenAndServe(":6060", rs.router())
 }
 
 func New() *RestServer {
-    sb = buffer.New(1)
-    claims = claim.New()
-    clm = claim.NewC(claims, sb)
+    sb := buffer.New(1)
+    claims := claim.New()
+    clm := claim.NewC(claims, sb)
 
-    rs := &RestServer{}
+    rs := &RestServer{sb, claims, clm}
     return rs
 }
 
 type RestServer struct {
-
+    sb *buffer.SimpleBuffer
+    claims *claim.Elastic
+    clm *claim.C
 }
 
 func (rs *RestServer) router() *mux.Router {
@@ -42,7 +39,7 @@ func (rs *RestServer) router() *mux.Router {
 }
 
 func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {
-    message, ok := clm.Next()
+    message, ok := rs.clm.Next()
     if false == ok {
         WriteEmptyJson(w)
         return
@@ -63,7 +60,7 @@ func (rs *RestServer) Post(w http.ResponseWriter, req *http.Request) {
         InternalError(w, err.Error())
         return
     }
-    res := sb.Add(string(body))
+    res := rs.sb.Add(string(body))
     if false == res {
         InternalError(w, "Buffer Full")
         return
@@ -80,7 +77,7 @@ func (rs *RestServer) Delete(w http.ResponseWriter, req *http.Request) {
         return
     }
     qry := claim.Query{Id: int(id), Out: make(chan claim.Item), Delete: true}
-    claims.Query <- qry
+    rs.claims.Query <- qry
     ec := claim.Item{}
     if ec == <- qry.Out {
         w.WriteHeader(http.StatusNotFound)
