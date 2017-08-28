@@ -4,15 +4,12 @@ import (
     "testing"
     "net/http"
     "net/http/httptest"
-    "github.com/roundpartner/seq/buffer"
     "strings"
-    "github.com/roundpartner/seq/claim"
 )
 
 func TestGet(t *testing.T) {
-    sb = buffer.New(0)
-    claims = claim.New()
-    clm = claim.NewC(claims, sb)
+    rs = New()
+
     rr := recordGet(t)
     if rr.Code != http.StatusOK {
         t.Fail()
@@ -20,7 +17,8 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetContentTypeIsJson(t *testing.T) {
-    sb = buffer.New(0)
+    rs = New()
+
     rr := recordGet(t)
     if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
         t.Fail()
@@ -28,7 +26,8 @@ func TestGetContentTypeIsJson(t *testing.T) {
 }
 
 func TestGetReturnsEmptyJson(t *testing.T) {
-    sb = buffer.New(1)
+    rs = New()
+
     rr := recordGet(t)
     if "{}" != rr.Body.String() {
         t.Fail()
@@ -36,9 +35,8 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 }
 
 func TestGetReturnsMessage(t *testing.T) {
-    sb = buffer.New(1)
-    claims = claim.New()
-    clm = claim.NewC(claims, sb)
+    rs = New()
+
     sb.Add("Hello World")
     rr := recordGet(t)
     if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
@@ -48,7 +46,6 @@ func TestGetReturnsMessage(t *testing.T) {
 }
 
 func recordGet(t *testing.T) *httptest.ResponseRecorder {
-    rs = &RestServer{}
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("GET", "/", nil)
     if err != nil {
@@ -82,9 +79,8 @@ func TestPostAddsMessageToBuffer(t *testing.T) {
 }
 
 func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
-    rs = &RestServer{}
-    sb = buffer.New(1)
-    claims = claim.New()
+    rs := New()
+
     rr := httptest.NewRecorder()
     r := strings.NewReader(body)
     req, err := http.NewRequest("POST", "/", r)
@@ -103,7 +99,7 @@ func TestDelete(t *testing.T) {
         t.Fatal(err)
     }
 
-    rs = &RestServer{}
+    rs := New()
     rs.router().ServeHTTP(rr, req)
 
     if rr.Code != http.StatusNotFound {
@@ -113,9 +109,8 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteReturnsNoContent(t *testing.T) {
-    sb = buffer.New(1)
-    claims = claim.New()
-    clm := claim.NewC(claims, sb)
+    rs := New()
+
     sb.Add("Hello World")
     c, _ := clm.Next()
     rr := httptest.NewRecorder()
@@ -125,7 +120,6 @@ func TestDeleteReturnsNoContent(t *testing.T) {
         t.Fatal(err)
     }
 
-    rs = &RestServer{}
     rs.router().ServeHTTP(rr, req)
 
     if rr.Code != http.StatusNoContent {
