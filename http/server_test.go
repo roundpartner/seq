@@ -53,7 +53,8 @@ func recordGet(t *testing.T) *httptest.ResponseRecorder {
     if err != nil {
         t.Fatal(err)
     }
-    Get(rr, req)
+    rs := RestServer{}
+    rs.Get(rr, req)
     return rr
 }
 
@@ -89,7 +90,8 @@ func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
     if err != nil {
         t.Fatal(err)
     }
-    Post(rr, req)
+    rs := RestServer{}
+    rs.Post(rr, req)
     return rr
 }
 

@@ -24,13 +24,18 @@ func Serve() {
 
 func router() *mux.Router {
     router := mux.NewRouter()
-    router.HandleFunc("/", Get).Methods("GET")
-    router.HandleFunc("/", Post).Methods("POST")
-    router.HandleFunc("/{id}", Delete).Methods("DELETE")
+    rs := RestServer{}
+    router.HandleFunc("/", rs.Get).Methods("GET")
+    router.HandleFunc("/", rs.Post).Methods("POST")
+    router.HandleFunc("/{id}", rs.Delete).Methods("DELETE")
     return router
 }
 
-func Get(w http.ResponseWriter, req *http.Request) {
+type RestServer struct {
+
+}
+
+func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {
     message, ok := clm.Next()
     if false == ok {
         WriteEmptyJson(w)
@@ -44,7 +49,7 @@ func Get(w http.ResponseWriter, req *http.Request) {
     w.Write(js)
 }
 
-func Post(w http.ResponseWriter, req *http.Request) {
+func (rs *RestServer) Post(w http.ResponseWriter, req *http.Request) {
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
     body, err := ioutil.ReadAll(req.Body)
@@ -60,7 +65,7 @@ func Post(w http.ResponseWriter, req *http.Request) {
     w.WriteHeader(http.StatusNoContent)
 }
 
-func Delete(w http.ResponseWriter, req *http.Request) {
+func (rs *RestServer) Delete(w http.ResponseWriter, req *http.Request) {
     params := mux.Vars(req)
     id, err := strconv.ParseInt(params["id"], 10, 32)
 
