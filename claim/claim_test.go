@@ -59,7 +59,6 @@ func TestNextInsertsAddsClaim(t *testing.T) {
 }
 
 func reset(size int) (*Elastic, *buffer.SimpleBuffer) {
-    id = 0
     sb := buffer.New(size)
     return New(), sb
 }
