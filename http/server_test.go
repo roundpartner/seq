@@ -31,9 +31,10 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 }
 
 func TestGetReturnsMessage(t *testing.T) {
-    buf = buffer.Create(1)
+    sb := buffer.New(1)
+    buf = sb.Messages
     claims = claim.New()
-    buffer.Add(buf, "Hello World")
+    buffer.Add(sb.Messages, "Hello World")
     rr := recordGet(t)
     if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
@@ -75,7 +76,8 @@ func TestPostAddsMessageToBuffer(t *testing.T) {
 }
 
 func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
-    buf = buffer.Create(1)
+    sb := buffer.New(1)
+    buf = sb.Messages
     claims = claim.New()
     rr := httptest.NewRecorder()
     r := strings.NewReader(body)
@@ -104,10 +106,11 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteReturnsNoContent(t *testing.T) {
-    buf = buffer.Create(1)
+    sb := buffer.New(1)
+    buf = sb.Messages
     claims = claim.New()
     claim.NewC(claims, buf)
-    buffer.Add(buf, "Hello World")
+    buffer.Add(sb.Messages, "Hello World")
     c, _ := claim.Next(claims, buf)
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)

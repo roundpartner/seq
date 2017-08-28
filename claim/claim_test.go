@@ -55,5 +55,6 @@ func TestNextInsertsAddsClaim(t *testing.T) {
 
 func reset(size int) (*Elastic, chan buffer.Message) {
     id = 0
-    return New(), buffer.Create(size)
+    sb := buffer.New(size)
+    return New(), sb.Messages
 }

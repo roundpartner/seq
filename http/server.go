@@ -14,7 +14,8 @@ var buf chan buffer.Message = nil
 var claims *claim.Elastic = nil
 
 func Serve() {
-    buf = buffer.Create(1)
+    sb := buffer.New(1)
+    buf = sb.Messages
     claims = claim.New()
 
     http.ListenAndServe(":6060", router())

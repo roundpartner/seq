@@ -4,9 +4,14 @@ type Message struct {
 	Content string
 }
 
-func Create(size int) chan Message {
-	messages := make(chan Message, size)
-	return messages
+type SimpleBuffer struct {
+    Messages chan Message
+}
+
+func New(size int) *SimpleBuffer {
+    return &SimpleBuffer{
+        Messages: make(chan Message, size),
+    }
 }
 
 func Add(messages chan Message, Content string) bool {

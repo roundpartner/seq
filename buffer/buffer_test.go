@@ -4,46 +4,46 @@ import (
 	"testing"
 )
 
-func TestCreate(t *testing.T) {
-	messages := Create(1)
+func TestNew(t *testing.T) {
+	sb := New(1)
 	message := Message{Content: "Hello World"}
-	messages <- message
-	if <-messages != message {
+    sb.Messages <- message
+	if <-sb.Messages != message {
 		t.Fail()
 	}
 }
 
 func TestAdd(t *testing.T) {
-	messages := Create(1)
-	result := Add(messages, "Hello World")
+	messages := New(1)
+	result := Add(messages.Messages, "Hello World")
 	if true != result {
 		t.Fail()
 	}
 }
 
 func TestAddTwo(t *testing.T) {
-	messages := Create(1)
-	Add(messages, "Hello World")
-	result := Add(messages, "Hello World")
+	messages := New(1)
+	Add(messages.Messages, "Hello World")
+	result := Add(messages.Messages, "Hello World")
 	if false != result {
 		t.Fail()
 	}
 }
 
 func TestPop(t *testing.T) {
-	messages := Create(1)
-	Add(messages, "Hello World")
-	message, _ := Pop(messages)
+	messages := New(1)
+	Add(messages.Messages, "Hello World")
+	message, _ := Pop(messages.Messages)
 	if "Hello World" != message {
 		t.Fail()
 	}
 }
 
 func TestPopTwo(t *testing.T) {
-    messages := Create(1)
-    Add(messages, "Hello World")
-    Pop(messages)
-    _, ok := Pop(messages)
+    messages := New(1)
+    Add(messages.Messages, "Hello World")
+    Pop(messages.Messages)
+    _, ok := Pop(messages.Messages)
     if false != ok {
         t.Fail()
     }
