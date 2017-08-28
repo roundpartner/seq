@@ -10,12 +10,11 @@ import (
     "strconv"
 )
 
-var buf chan buffer.Message = nil
+var sb *buffer.SimpleBuffer = nil
 var claims *claim.Elastic = nil
 
 func Serve() {
-    sb := buffer.New(1)
-    buf = sb.Messages
+    sb = buffer.New(1)
     claims = claim.New()
 
     http.ListenAndServe(":6060", router())
@@ -30,7 +29,7 @@ func router() *mux.Router {
 }
 
 func Get(w http.ResponseWriter, req *http.Request) {
-    message, ok := claim.Next(claims, buf)
+    message, ok := claim.Next(claims, sb)
     if false == ok {
         WriteEmptyJson(w)
         return
@@ -51,7 +50,7 @@ func Post(w http.ResponseWriter, req *http.Request) {
         InternalError(w, err.Error())
         return
     }
-    res := buffer.Add(buf, string(body))
+    res := sb.Add(string(body))
     if false == res {
         InternalError(w, "Buffer Full")
         return

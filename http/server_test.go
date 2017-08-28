@@ -10,6 +10,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
+    sb = buffer.New(0)
     rr := recordGet(t)
     if rr.Code != http.StatusOK {
         t.Fail()
@@ -17,6 +18,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetContentTypeIsJson(t *testing.T) {
+    sb = buffer.New(0)
     rr := recordGet(t)
     if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
         t.Fail()
@@ -24,6 +26,7 @@ func TestGetContentTypeIsJson(t *testing.T) {
 }
 
 func TestGetReturnsEmptyJson(t *testing.T) {
+    sb = buffer.New(1)
     rr := recordGet(t)
     if "{}" != rr.Body.String() {
         t.Fail()
@@ -31,10 +34,9 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 }
 
 func TestGetReturnsMessage(t *testing.T) {
-    sb := buffer.New(1)
-    buf = sb.Messages
+    sb = buffer.New(1)
     claims = claim.New()
-    buffer.Add(sb.Messages, "Hello World")
+    sb.Add("Hello World")
     rr := recordGet(t)
     if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
@@ -61,7 +63,7 @@ func TestPost(t *testing.T) {
 
 func TestPostAddsToBuffer(t *testing.T) {
     recordPost(t, "")
-    _, ok := buffer.Pop(buf)
+    _, ok := sb.Pop()
     if false == ok {
         t.Fail()
     }
@@ -69,15 +71,14 @@ func TestPostAddsToBuffer(t *testing.T) {
 
 func TestPostAddsMessageToBuffer(t *testing.T) {
     recordPost(t, "Hello World")
-    message, _ := buffer.Pop(buf)
+    message, _ := sb.Pop()
     if "Hello World" != message {
         t.Fail()
     }
 }
 
 func recordPost(t *testing.T, body string) *httptest.ResponseRecorder {
-    sb := buffer.New(1)
-    buf = sb.Messages
+    sb = buffer.New(1)
     claims = claim.New()
     rr := httptest.NewRecorder()
     r := strings.NewReader(body)
@@ -106,12 +107,11 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteReturnsNoContent(t *testing.T) {
-    sb := buffer.New(1)
-    buf = sb.Messages
+    sb = buffer.New(1)
     claims = claim.New()
-    claim.NewC(claims, buf)
-    buffer.Add(sb.Messages, "Hello World")
-    c, _ := claim.Next(claims, buf)
+    claim.NewC(claims, sb)
+    sb.Add("Hello World")
+    c, _ := claim.Next(claims, sb)
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)
     if err != nil {

@@ -14,12 +14,21 @@ func New(size int) *SimpleBuffer {
     }
 }
 
-func Add(messages chan Message, Content string) bool {
+func (sb *SimpleBuffer) Add(Content string) bool {
     select {
-        case messages <- Message{Content: Content}:
+        case sb.Messages <- Message{Content: Content}:
             return true
         default:
             return false
+    }
+}
+
+func (sb *SimpleBuffer) Pop() (string, bool) {
+    select {
+        case message := <- sb.Messages:
+            return message.Content, true
+        default:
+            return "", false
     }
 }
 

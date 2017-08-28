@@ -14,14 +14,14 @@ type C struct {
     buf chan buffer.Message
 }
 
-func NewC(elastic *Elastic, buf chan buffer.Message) *C {
-    c := &C{elastic, buf}
+func NewC(elastic *Elastic, sb *buffer.SimpleBuffer) *C {
+    c := &C{elastic, sb.Messages}
     id = 0
     return c
 }
 
-func Next(elastic *Elastic, buf chan buffer.Message) (Item, bool) {
-    body, ok := buffer.Pop(buf)
+func Next(elastic *Elastic, sb *buffer.SimpleBuffer) (Item, bool) {
+    body, ok := sb.Pop()
     if false == ok {
         return Item{}, false
     }

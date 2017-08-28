@@ -14,36 +14,36 @@ func TestNew(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	messages := New(1)
-	result := Add(messages.Messages, "Hello World")
+	sb := New(1)
+    result := sb.Add("Hello World")
 	if true != result {
 		t.Fail()
 	}
 }
 
-func TestAddTwo(t *testing.T) {
-	messages := New(1)
-	Add(messages.Messages, "Hello World")
-	result := Add(messages.Messages, "Hello World")
+func TestAddTwoFails(t *testing.T) {
+    sb := New(1)
+    sb.Add("Hello World")
+    result := sb.Add("Hello World")
 	if false != result {
 		t.Fail()
 	}
 }
 
 func TestPop(t *testing.T) {
-	messages := New(1)
-	Add(messages.Messages, "Hello World")
-	message, _ := Pop(messages.Messages)
+    sb := New(1)
+    sb.Add("Hello World")
+	message, _ := sb.Pop()
 	if "Hello World" != message {
 		t.Fail()
 	}
 }
 
-func TestPopTwo(t *testing.T) {
-    messages := New(1)
-    Add(messages.Messages, "Hello World")
-    Pop(messages.Messages)
-    _, ok := Pop(messages.Messages)
+func TestPopTwoFails(t *testing.T) {
+    sb := New(1)
+    sb.Add("Hello World")
+    sb.Pop()
+    _, ok := sb.Pop()
     if false != ok {
         t.Fail()
     }
