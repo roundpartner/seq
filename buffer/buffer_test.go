@@ -3,12 +3,14 @@ package buffer
 import (
 	"testing"
     "runtime"
+    "time"
 )
 
 func TestNew(t *testing.T) {
 	sb := New()
 	message := Message{Content: "Test New"}
     sb.In <- message
+    runtime.Gosched()
 	if <-sb.Out != message {
 		t.Fail()
 	}
@@ -69,5 +71,21 @@ func TestPopTwoFails(t *testing.T) {
     _, ok := sb.Pop()
     if false != ok {
         t.Fail()
+    }
+}
+
+func TestPopMany(t *testing.T) {
+    sb := New()
+    for i := 1; i <= 30; i++ {
+        runtime.Gosched()
+        sb.Add("Test Pop Many")
+        time.Sleep(time.Millisecond * 10)
+    }
+    for len(sb.buffer) != 0 {
+        runtime.Gosched()
+        message, _ := sb.Pop()
+        if "Test Pop Many" != message {
+            t.Fail()
+        }
     }
 }

@@ -12,8 +12,8 @@ type SimpleBuffer struct {
 
 func New() *SimpleBuffer {
     sb := &SimpleBuffer{
-        In: make(chan Message),
-        Out: make(chan Message),
+        In: make(chan Message, 10),
+        Out: make(chan Message, 10),
         buffer: make([]Message, 0),
     }
     go sb.run()
@@ -41,7 +41,8 @@ func (sb *SimpleBuffer) Add(Content string) bool {
         case sb.In <- Message{Content: Content}:
             return true
         default:
-            return false
+            sb.In <- Message{Content: Content}
+            return true
     }
 }
 
