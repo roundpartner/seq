@@ -6,7 +6,7 @@ import (
 )
 
 func TestNext(t *testing.T) {
-    e, sb := reset(1)
+    e, sb := reset()
     clm := NewC(e, sb)
     sb.Add("Hello World")
     _, ok := clm.Next()
@@ -16,7 +16,7 @@ func TestNext(t *testing.T) {
 }
 
 func TestNextHasId(t *testing.T) {
-    e, sb := reset(1)
+    e, sb := reset()
     clm := NewC(e, sb)
     sb.Add("Hello World")
     c, _ := clm.Next()
@@ -26,7 +26,7 @@ func TestNextHasId(t *testing.T) {
 }
 
 func TestNextHasBody(t *testing.T) {
-    e, sb := reset(1)
+    e, sb := reset()
     clm := NewC(e, sb)
     sb.Add("Hello World")
     c, _ := clm.Next()
@@ -36,7 +36,7 @@ func TestNextHasBody(t *testing.T) {
 }
 
 func TestNextHasIncrementingId(t *testing.T) {
-    e, sb := reset(2)
+    e, sb := reset()
     clm := NewC(e, sb)
     sb.Add("Hello World")
     sb.Add("Hello World")
@@ -49,7 +49,7 @@ func TestNextHasIncrementingId(t *testing.T) {
 }
 
 func TestNextInsertsAddsClaim(t *testing.T) {
-    e, sb := reset(1)
+    e, sb := reset()
     clm := NewC(e, sb)
     sb.Add("Hello World")
     c, _ := clm.Next()
@@ -58,7 +58,7 @@ func TestNextInsertsAddsClaim(t *testing.T) {
     }
 }
 
-func reset(size int) (*Elastic, *buffer.SimpleBuffer) {
-    sb := buffer.New(size)
+func reset() (*Elastic, *buffer.SimpleBuffer) {
+    sb := buffer.New()
     return New(), sb
 }

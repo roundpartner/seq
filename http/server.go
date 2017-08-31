@@ -16,7 +16,7 @@ func ListenAndServe() {
 }
 
 func New() *RestServer {
-    sb := buffer.New(1)
+    sb := buffer.New()
     claims := claim.New()
     clm := claim.NewC(claims, sb)
 
