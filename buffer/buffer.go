@@ -4,54 +4,43 @@ type Message struct {
 	Content string
 }
 
-type SimpleBuffer struct {
-    In chan Message
-    Out chan Message
-    buffer []Message
+type BaseBuffer interface {
+    Add(Content string) bool
+    Pop() (string, bool)
 }
 
-func New() *SimpleBuffer {
+func Add(bb BaseBuffer, Content string) (bool) {
+    return bb.Add(Content)
+}
+
+func Pop(bb BaseBuffer) (string, bool) {
+    return bb.Pop()
+}
+
+type SimpleBuffer struct {
+    Buffer chan Message
+}
+
+func NewSimpleBuffer() *SimpleBuffer {
     sb := &SimpleBuffer{
-        In: make(chan Message, 10),
-        Out: make(chan Message, 10),
-        buffer: make([]Message, 0),
+        Buffer: make(chan Message, 10),
     }
-    go sb.run()
     return sb
 }
 
-func (sb *SimpleBuffer) run() {
-    for {
-        if len(sb.buffer) > 0 {
-            select {
-                case sb.Out <- sb.buffer[0]:
-                    sb.buffer = sb.buffer[1:]
-                case value := <- sb.In:
-                    sb.buffer = append(sb.buffer, value)
-            }
-        } else {
-            value := <-sb.In
-            sb.buffer = append(sb.buffer, value)
-        }
-    }
+func (sb SimpleBuffer) Add(Content string) (bool) {
+    msg := Message{Content: Content}
+    sb.Buffer <- msg
+    return true
 }
 
-func (sb *SimpleBuffer) Add(Content string) bool {
+func (sb SimpleBuffer) Pop() (string, bool) {
     select {
-        case sb.In <- Message{Content: Content}:
-            return true
-        default:
-            sb.In <- Message{Content: Content}
-            return true
-    }
-}
-
-func (sb *SimpleBuffer) Pop() (string, bool) {
-    select {
-        case message := <- sb.Out:
-            return message.Content, true
+        case msg := <- sb.Buffer:
+            return msg.Content, true
         default:
             return "", false
+
     }
 }
 

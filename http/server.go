@@ -11,23 +11,22 @@ import (
 )
 
 func ListenAndServe() {
-    rs := New()
+    rs := New(buffer.New())
     http.ListenAndServe(":6060", rs.router())
 }
 
-func New() *RestServer {
-    sb := buffer.New()
+func New(bb buffer.BaseBuffer) *RestServer {
     claims := claim.New()
-    clm := claim.NewC(claims, sb)
+    clm := claim.NewC(claims, bb)
 
-    rs := &RestServer{sb, claims, clm}
+    rs := &RestServer{bb, claims, clm}
     return rs
 }
 
 type RestServer struct {
-    sb *buffer.SimpleBuffer
+    sb buffer.BaseBuffer
     claims *claim.Elastic
-    clm *claim.C
+    clm *claim.Clm
 }
 
 func (rs *RestServer) router() *mux.Router {

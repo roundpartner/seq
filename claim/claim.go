@@ -7,18 +7,18 @@ type Item struct {
     Body string `json:"body"`
 }
 
-type C struct {
+type Clm struct {
     elastic *Elastic
-    sb *buffer.SimpleBuffer
+    sb buffer.BaseBuffer
     counter int
 }
 
-func NewC(elastic *Elastic, sb *buffer.SimpleBuffer) *C {
-    c := &C{elastic, sb, 0}
+func NewC(elastic *Elastic, sb buffer.BaseBuffer) *Clm {
+    c := &Clm{elastic, sb, 0}
     return c
 }
 
-func (claim *C) Next() (Item, bool) {
+func (claim *Clm) Next() (Item, bool) {
     body, ok := claim.sb.Pop()
     if false == ok {
         return Item{}, false

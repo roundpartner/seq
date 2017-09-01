@@ -5,11 +5,12 @@ import (
     "net/http"
     "net/http/httptest"
     "strings"
+    "github.com/roundpartner/seq/buffer"
+    "runtime"
 )
 
 func TestGet(t *testing.T) {
-    rs := New()
-
+    rs := New(buffer.NewSimpleBuffer())
     rr := recordGet(t, rs)
     if rr.Code != http.StatusOK {
         t.Fail()
@@ -17,7 +18,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetContentTypeIsJson(t *testing.T) {
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
 
     rr := recordGet(t, rs)
     if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
@@ -26,8 +27,7 @@ func TestGetContentTypeIsJson(t *testing.T) {
 }
 
 func TestGetReturnsEmptyJson(t *testing.T) {
-    rs := New()
-
+    rs := New(buffer.NewSimpleBuffer())
     rr := recordGet(t, rs)
     if "{}" != rr.Body.String() {
         t.Fail()
@@ -35,11 +35,10 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 }
 
 func TestGetReturnsMessage(t *testing.T) {
-    rs := New()
-
-    rs.sb.Add("Hello World")
+    rs := New(buffer.NewSimpleBuffer())
+    rs.sb.Add("JSON Encoded Content")
     rr := recordGet(t, rs)
-    if "{\"id\":1,\"body\":\"Hello World\"}" != rr.Body.String() {
+    if "{\"id\":1,\"body\":\"JSON Encoded Content\"}" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
         t.Fail()
     }
@@ -51,12 +50,13 @@ func recordGet(t *testing.T, rs *RestServer) *httptest.ResponseRecorder {
     if err != nil {
         t.Fatal(err)
     }
+    runtime.Gosched()
     rs.Get(rr, req)
     return rr
 }
 
 func TestPost(t *testing.T) {
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
     rr := recordPost(t, rs, "")
     if rr.Code != http.StatusNoContent {
         t.Fail()
@@ -64,17 +64,21 @@ func TestPost(t *testing.T) {
 }
 
 func TestPostAddsToBuffer(t *testing.T) {
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
+    rs.sb = buffer.NewSimpleBuffer()
     recordPost(t, rs, "")
-    _, ok := rs.sb.Pop()
+    runtime.Gosched()
+    _, ok := buffer.Pop(rs.sb)
+    //_, ok := rs.sb.Pop()
     if false == ok {
         t.Fail()
     }
 }
 
 func TestPostAddsMessageToBuffer(t *testing.T) {
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
     recordPost(t, rs, "Hello World")
+    runtime.Gosched()
     message, _ := rs.sb.Pop()
     if "Hello World" != message {
         t.Fail()
@@ -100,7 +104,7 @@ func TestDelete(t *testing.T) {
         t.Fatal(err)
     }
 
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
     rs.router().ServeHTTP(rr, req)
 
     if rr.Code != http.StatusNotFound {
@@ -110,9 +114,10 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteReturnsNoContent(t *testing.T) {
-    rs := New()
+    rs := New(buffer.NewSimpleBuffer())
 
     rs.sb.Add("Hello World")
+    runtime.Gosched()
     c, _ := rs.clm.Next()
     rr := httptest.NewRecorder()
     req, err := http.NewRequest("DELETE", "/1", nil)
