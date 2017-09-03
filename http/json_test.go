@@ -60,7 +60,7 @@ func TestWriteEmptyJsonSetsContentType(t *testing.T) {
 func TestWriteEmptyJsonSendsEmptyMessage(t *testing.T) {
     rr := httptest.NewRecorder()
     WriteEmptyJson(rr)
-    if "{}" != rr.Body.String() {
+    if "[]" != rr.Body.String() {
         t.Errorf("got \"%s\"",rr.Body.String())
         t.Fail()
     }

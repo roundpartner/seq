@@ -12,6 +12,8 @@ go build
 ./seq
 ```
 
+## Usage
+
 ```bash
 curl http://0.0.0.0:6060 -X POST -d "hello world"
 ```
@@ -20,7 +22,7 @@ curl http://0.0.0.0:6060 -X POST -d "hello world"
 curl http://0.0.0.0:6060
 ```
 
-> {"id":1,"body":"hello world"}
+> [{"id":1,"body":"hello world"}]
 
 ```bash
 curl http://0.0.0.0:6060/1 -X DELETE

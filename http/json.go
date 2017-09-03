@@ -21,6 +21,6 @@ func WriteJson(w http.ResponseWriter, output interface{}) {
 func WriteEmptyJson(w http.ResponseWriter) {
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
     w.WriteHeader(http.StatusOK)
-    js := bytes.NewBufferString("{}").Bytes()
+    js := bytes.NewBufferString("[]").Bytes()
     w.Write(js)
 }

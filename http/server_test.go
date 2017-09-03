@@ -29,7 +29,7 @@ func TestGetContentTypeIsJson(t *testing.T) {
 func TestGetReturnsEmptyJson(t *testing.T) {
     rs := New(buffer.NewSimpleBuffer())
     rr := recordGet(t, rs)
-    if "{}" != rr.Body.String() {
+    if "[]" != rr.Body.String() {
         t.Fail()
     }
 }
@@ -38,7 +38,7 @@ func TestGetReturnsMessage(t *testing.T) {
     rs := New(buffer.NewSimpleBuffer())
     rs.sb.Add("JSON Encoded Content")
     rr := recordGet(t, rs)
-    if "{\"id\":1,\"body\":\"JSON Encoded Content\"}" != rr.Body.String() {
+    if "[{\"id\":1,\"body\":\"JSON Encoded Content\"}]" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
         t.Fail()
     }

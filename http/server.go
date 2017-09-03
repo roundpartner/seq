@@ -43,7 +43,8 @@ func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {
         WriteEmptyJson(w)
         return
     }
-    js, err := json.Marshal(message)
+    items := [1]claim.Item{message}
+    js, err := json.Marshal(items)
     if err != nil {
         InternalError(w, err.Error())
         return
