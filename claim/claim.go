@@ -1,10 +1,14 @@
 package claim
 
-import "github.com/roundpartner/seq/buffer"
+import (
+    "github.com/roundpartner/seq/buffer"
+    "encoding/json"
+    "bytes"
+)
 
 type Item struct {
     Id int `json:"id"`
-    Body string `json:"body"`
+    Body interface{} `json:"body"`
 }
 
 type Clm struct {
@@ -24,7 +28,15 @@ func (claim *Clm) Next() (Item, bool) {
         return Item{}, false
     }
     claim.counter++
-    item := Item{Id: claim.counter, Body: body}
+
+    b := bytes.NewBufferString(body).Bytes()
+    var i interface{}
+    err := json.Unmarshal(b, &i)
+    if nil != err {
+        return Item{}, false
+    }
+
+    item := Item{Id: claim.counter, Body: i}
     claim.elastic.In <- item
     return item, true
 }

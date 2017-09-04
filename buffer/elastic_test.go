@@ -45,11 +45,11 @@ func TestPopOut(t *testing.T) {
 
 func TestPopIn(t *testing.T) {
     sb := New()
-    msg := Message{Content: "Test Pop In"}
+    msg := Message{Content: "\"Test Pop In\""}
     sb.In <- msg
     runtime.Gosched()
     message, _ := sb.Pop()
-    if "Test Pop In" != message {
+    if "\"Test Pop In\"" != message {
         t.Fail()
     }
 }
@@ -78,13 +78,13 @@ func TestPopMany(t *testing.T) {
     sb := New()
     for i := 1; i <= 30; i++ {
         runtime.Gosched()
-        sb.Add("Test Pop Many")
+        sb.Add("\"Test Pop Many\"")
         time.Sleep(time.Millisecond * 10)
     }
     for len(sb.buffer) != 0 {
         runtime.Gosched()
         message, _ := sb.Pop()
-        if "Test Pop Many" != message {
+        if "\"Test Pop Many\"" != message {
             t.Fail()
         }
     }

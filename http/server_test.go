@@ -36,7 +36,7 @@ func TestGetReturnsEmptyJson(t *testing.T) {
 
 func TestGetReturnsMessage(t *testing.T) {
     rs := New(buffer.NewSimpleBuffer())
-    rs.sb.Add("JSON Encoded Content")
+    rs.sb.Add("\"JSON Encoded Content\"")
     rr := recordGet(t, rs)
     if "[{\"id\":1,\"body\":\"JSON Encoded Content\"}]" != rr.Body.String() {
         t.Errorf("response: %s", rr.Body.String())
@@ -116,7 +116,7 @@ func TestDelete(t *testing.T) {
 func TestDeleteReturnsNoContent(t *testing.T) {
     rs := New(buffer.NewSimpleBuffer())
 
-    rs.sb.Add("Hello World")
+    rs.sb.Add("\"Delete Me\"")
     runtime.Gosched()
     c, _ := rs.clm.Next()
     rr := httptest.NewRecorder()

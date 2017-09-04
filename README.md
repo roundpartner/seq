@@ -15,7 +15,7 @@ go build
 ## Usage
 
 ```bash
-curl http://0.0.0.0:6060 -X POST -d "hello world"
+curl http://0.0.0.0:6060 -X POST -d "\"hello world\""
 ```
 
 ```bash
