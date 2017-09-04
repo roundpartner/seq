@@ -49,6 +49,8 @@ func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {
         InternalError(w, err.Error())
         return
     }
+
+    w.Header().Set("HMAC", getHMAC(js))
     w.Write(js)
 }
 

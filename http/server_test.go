@@ -34,6 +34,15 @@ func TestGetReturnsEmptyJson(t *testing.T) {
     }
 }
 
+func TestGetSetsHMACHeader(t *testing.T) {
+    rs := New(buffer.NewSimpleBuffer())
+    rs.sb.Add("\"JSON Encoded Content\"")
+    rr := recordGet(t, rs)
+    if "" == rr.Header().Get("HMAC") {
+        t.Fail()
+    }
+}
+
 func TestGetReturnsMessage(t *testing.T) {
     rs := New(buffer.NewSimpleBuffer())
     rs.sb.Add("\"JSON Encoded Content\"")
