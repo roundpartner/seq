@@ -49,6 +49,15 @@ func TestWriteEmptyJson(t *testing.T) {
     }
 }
 
+func TestWriteEmptyJsonSetsHMAC(t *testing.T) {
+    rr := httptest.NewRecorder()
+    WriteEmptyJson(rr)
+    if "gBPtzLexSoIuVxap0j4hNLWxk24pBw6ZlpKQLwr8RVk=" != rr.Header().Get("HMAC") {
+        t.Errorf("hmac: %s", rr.Header().Get("HMAC"))
+        t.Fail()
+    }
+}
+
 func TestWriteEmptyJsonSetsContentType(t *testing.T) {
     rr := httptest.NewRecorder()
     WriteEmptyJson(rr)

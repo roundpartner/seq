@@ -5,12 +5,20 @@ import (
     "bytes"
 )
 
-func TestGetHMAC(t *testing.T) {
+func TestGetBase64HMAC(t *testing.T) {
     payload := bytes.NewBufferString("hello world").Bytes()
-    digest := getHMAC(payload)
-    if "6ec035d91dc104db569a01a4d8c16fb13f125dc298992edfb8e66d3a837fe0c5" != digest {
+    digest := getBase64HMAC(payload)
+    if "o+DObPy4SD7mcLLw5YwfZhXAdC7B5eH0H7lfE9/oxak=" != digest {
         t.Errorf("digest does not match: %s", digest)
         t.Fail()
     }
+}
 
+func TestGetHexHMAC(t *testing.T) {
+    payload := bytes.NewBufferString("hello world").Bytes()
+    digest := getHexHMAC(payload)
+    if "a3e0ce6cfcb8483ee670b2f0e58c1f6615c0742ec1e5e1f41fb95f13dfe8c5a9" != digest {
+        t.Errorf("digest does not match: %s", digest)
+        t.Fail()
+    }
 }

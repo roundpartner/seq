@@ -50,7 +50,7 @@ func (rs *RestServer) Get(w http.ResponseWriter, req *http.Request) {
         return
     }
 
-    w.Header().Set("HMAC", getHMAC(js))
+    w.Header().Set("HMAC", getBase64HMAC(js))
     w.Write(js)
 }
 
