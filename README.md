@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/roundpartner/seq.svg?branch=master)](https://travis-ci.org/roundpartner/seq)
+[![Docker Build](https://img.shields.io/docker/automated/imacatlol/seq.svg)](https://hub.docker.com/r/imacatlol/seq/)
+[![Docker pulls](https://img.shields.io/docker/pulls/imacatlol/seq.svg)](https://hub.docker.com/r/imacatlol/seq/)
 
 # SEQ
 A Task Queue In Go
