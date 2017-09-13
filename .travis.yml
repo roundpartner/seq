@@ -6,11 +6,11 @@ go:
 
 secure: "5qB4Lx2a0DQMRY5/rmtqqNdQyHLI6RI+lWOFd+fRfqRhtmmUkF1MFANWJfrREyGVeZLpb6KAgOXlApEJt9nmMTyI60VcI0NMou7VFsgVza1ftBjKt6rC2sb87U29UwB3Vo1QSq5n4EaM/HlUVR9/Mzw3dIa+UIhYE7/POD1MXh9Fz4P74nXU1vIYLKsxl/POIJkFNbdNQucsHSA0hhCK1NaV8eLnkpbFQm0I7kA5Wd/Fwv7oR8q5HKJVDvQscsV0SA4rMOrPgAzo/3wMlIU1Kbjz+APMJsZ2C1siD9XF1t+ssKaygahbnHSwYwEhsfpyvQgWunynNQdULgemIJBP9vO3MExPacvVOw4iHrOzg0UXadbXiKU6UbL1U4/TAOBerOVzQWVRKH0K8bT2jFPhrTSzelebI0OERlArBNsvlAwn8S3a8MTDPHGgZVPQ3OboTAvr2lE/fz7ZiWiKFYSedoAZCVml/bPM0N9Wn5g6Betdu5/NDwCYgg5r2MCrT6SiONsVtaNrKU1y/RRVas5bBmOfT1QaUZvSzJwenxHajx+atujGrTSsrh/Jpip79Zz+ZH0srh+utF098Ktu2Jyi2Gz1Nt8GQBR0EzWT4LSoXMvkce9SsCcX+pEr+yye6ZWTdRVVMbXsmtNhVNtaN12D8f8WR4jdDvSme8WJ8qIiNmc="
 
-install:
+before_install:
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
   
 script:
-  - go test -v -covermode=count -coverprofile=coverage.out
+  - go test -v -covermode=count -coverprofile=coverage.out ./...
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 ...
